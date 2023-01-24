@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/4.1/ref/settings/
 """
 
 from pathlib import Path
+from pymongo import MongoClient
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -41,8 +42,32 @@ INSTALLED_APPS = [
     #new
     'apis.apps.ApisConfig',
     'corsheaders',
+    'rest_framework',
+    'mongo_auth',   #jwt authentication using mongo
+    'rest_framework.authtoken',
 
 ]
+
+
+
+# mongo_auth db configs
+MANGO_JWT_SETTINGS = {
+    "db_host": "localhost", # Use srv host if connecting with MongoDB Atlas Cluster
+    "db_port": "27017", # Don't include this field if connecting with MongoDB Atlas Cluster
+    "db_name": "mystore",
+    "db_user": "username",
+    "db_pass": "password",
+    "auth_collection": "User",
+    "fields": ("email", "password"), # default
+    "jwt_secret": "secret", # default
+    "jwt_life": 7, # default (in days)
+    # "secondary_username_field": "mobile_no" # default is None
+}
+
+
+
+
+
 
 
 MIDDLEWARE = [
@@ -56,9 +81,15 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework.authentication.TokenAuthentication',
+    ]
+}
+
 CORS_ORIGIN_ALLOW_ALL = False
 CORS_ORIGIN_WHITELIST = (
-    'http://localhost:300',
+    'http://localhost:3000',
 )
 
 ROOT_URLCONF = 'demo.urls'
@@ -80,6 +111,15 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'demo.wsgi.application'
+
+client = MongoClient()
+db = client.appdb
+
+REST_FRAMEWORK = {
+'DEFAULT_PERMISSION_CLASSES': [
+'rest_framework.permissions.AllowAny',
+]
+}
 
 
 # Database
@@ -133,3 +173,6 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/4.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+
+

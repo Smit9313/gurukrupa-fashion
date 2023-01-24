@@ -18,5 +18,6 @@ from django.urls import path,include
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('',include('apis.urls')), #new
+    path('api',include('apis.urls')), #new
+    path('mongo_auth/', include('mongo_auth.urls')),
 ]
